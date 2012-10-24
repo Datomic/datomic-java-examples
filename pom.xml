@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0" >
+ <dependencies>
+    <dependency>
+      <groupId>com.datomic</groupId>
+      <artifactId>datomic-free</artifactId>
+      <version>0.8.3561</version>
+    </dependency>
+ </dependencies>
+ <version>0.0</version>
+ <groupId>com.datomic</groupId>
+ <name>datomic-java-examples</name>
+ <artifactId>datomic-java-examples</artifactId>
+ <properties>
+  <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+ </properties>
+ <modelVersion>4.0.0</modelVersion>
+ <repositories>
+  <repository>
+   <id>Sonatype</id>
+   <name>Sonatype Release</name>
+   <url>http://oss.sonatype.org/content/repositories/releases</url>
+   <releases>
+    <enabled>true</enabled>
+   </releases>
+   <snapshots>
+    <enabled>false</enabled>
+   </snapshots>
+  </repository>
+  <repository>
+   <id>jboss</id>
+   <url>https://repository.jboss.org/nexus/content/groups/public</url>
+   <releases>
+    <enabled>true</enabled>
+   </releases>
+   <snapshots>
+    <enabled>false</enabled>
+   </snapshots>
+  </repository>
+  <repository>
+   <id>clojure-releases</id>
+   <url>http://build.clojure.org/releases</url>
+   <releases>
+    <enabled>true</enabled>
+   </releases>
+   <snapshots>
+    <enabled>false</enabled>
+   </snapshots>
+  </repository>
+ </repositories>
+</project>
