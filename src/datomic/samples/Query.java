@@ -58,6 +58,13 @@ public class Query {
         }
     }
 
+    public static String rules  =
+            "[[[attr-in-namespace ?e ?ns2]\n" +
+            "  [?e :db/ident ?a]\n" +
+            "  [?e :db/valueType]\n" +
+            "  [(namespace ?a) ?ns1]\n" +
+            "  [(= ?ns1 ?ns2)]]]";
+
     public static void main(String[] args) {
         Connection conn = scratchConnection();
         Database db = conn.db();
@@ -76,5 +83,14 @@ public class Query {
                              " :where [?e :db/ident ?ident]" +
                              "        [(datomic.samples.Query/maybe $ ?e :db/cardinality \"<none>\") ?card]]",
                            db));
+
+        System.out.println("Look up attributes in the db namespace:");
+        System.out.println(q(
+                "[:find ?e ?ident\n" +
+                "     :in $ %\n" +
+                "     :where\n" +
+                "     (attr-in-namespace ?e \"db\")\n" +
+                "     [?e :db/ident ?ident]]",
+                db, rules));
     }
 }
