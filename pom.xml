@@ -5,7 +5,7 @@
     <dependency>
       <groupId>com.datomic</groupId>
       <artifactId>datomic-free</artifactId>
-      <version>0.8.3563</version>
+      <version>0.8.3595</version>
     </dependency>
  </dependencies>
  <version>0.0</version>
@@ -16,6 +16,14 @@
   <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
  </properties>
  <modelVersion>4.0.0</modelVersion>
+ <build>
+  <sourceDirectory>src/java</sourceDirectory>
+  <resources>
+   <resource>
+    <directory>src/resources</directory>
+   </resource>
+  </resources>
+ </build>
  <repositories>
   <repository>
    <id>Sonatype</id>
