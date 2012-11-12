@@ -36,8 +36,8 @@ public class PingProducer {
             // Step 3. As we are not using a JNDI environment we instantiate the objects directly
             final String queueName = "queue.exampleQueue";
 
+            ServerLocator serverLocator = HornetQClient.createServerLocatorWithoutHA(new TransportConfiguration(NettyConnectorFactory.class.getName(), nettyOpts()));
             for (int n=0; true; n++) {
-                ServerLocator serverLocator = HornetQClient.createServerLocatorWithoutHA(new TransportConfiguration(NettyConnectorFactory.class.getName(), nettyOpts()));
                 ClientSessionFactory sf = serverLocator.createSessionFactory();
 
                 // Step 5. Create the session, and producer
@@ -57,9 +57,7 @@ public class PingProducer {
                 System.out.println("Close the session");
                 session.close();
                 sf.close();
-                serverLocator.close();
-                // comment the line below out, problems will happen much sooner
-                Thread.sleep(100);
+                // serverLocator.close();
             }
         }
         catch (Exception e)
