@@ -15,9 +15,14 @@ import org.hornetq.core.remoting.impl.invm.InVMConnectorFactory;
 import org.hornetq.core.remoting.impl.netty.NettyConnectorFactory;
 import org.hornetq.core.server.HornetQServer;
 import org.hornetq.core.server.HornetQServers;
+import org.slf4j.bridge.SLF4JBridgeHandler;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.ConsoleHandler;
+import java.util.logging.Level;
+import java.util.logging.LogManager;
+import java.util.logging.Logger;
 
 public class PingProducer {
     public static Map nettyOpts() {
@@ -31,6 +36,8 @@ public class PingProducer {
     }
 
     public static void main(final String[] args) throws InterruptedException {
+        SLF4JBridgeHandler.install();
+        LogManager.getLogManager().getLogger("").info("Ping Producer Starting");
         try
         {
             // Step 3. As we are not using a JNDI environment we instantiate the objects directly

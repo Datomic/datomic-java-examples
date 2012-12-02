@@ -1,5 +1,6 @@
 package hornet.samples;
 
+import datomic.samples.IO;
 import org.hornetq.api.core.TransportConfiguration;
 import org.hornetq.api.core.client.ClientConsumer;
 import org.hornetq.api.core.client.ClientMessage;
@@ -16,9 +17,12 @@ import org.hornetq.core.remoting.impl.netty.NettyAcceptorFactory;
 import org.hornetq.core.remoting.impl.netty.NettyConnectorFactory;
 import org.hornetq.core.server.HornetQServer;
 import org.hornetq.core.server.HornetQServers;
+import org.slf4j.LoggerFactory;
+import org.slf4j.bridge.SLF4JBridgeHandler;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.LogManager;
 
 public class PingConsumer {
     public static Map nettyOpts() {
@@ -33,8 +37,12 @@ public class PingConsumer {
         return m;
     }
     public static void main(String[] args) {
+        SLF4JBridgeHandler.install();
+        LogManager.getLogManager().getLogger("").info("Ping Consumer Starting");
+
         try
         {
+
             // Step 1. Create the Configuration, and set the properties accordingly
             Configuration configuration = new ConfigurationImpl();
             configuration.setPersistenceEnabled(false);

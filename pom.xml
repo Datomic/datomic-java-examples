@@ -5,7 +5,22 @@
     <dependency>
       <groupId>com.datomic</groupId>
       <artifactId>datomic-free</artifactId>
-      <version>0.8.3595</version>
+      <version>0.8.3627</version>
+      <exclusions>
+        <exclusion>
+          <groupId>org.slf4j</groupId>
+          <artifactId>slf4j-log4j12</artifactId>
+        </exclusion>
+        <exclusion>
+         <groupId>org.slf4j</groupId>
+         <artifactId>slf4j-nop</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>ch.qos.logback</groupId>
+      <artifactId>logback-classic</artifactId>
+      <version>1.0.1</version>
     </dependency>
  </dependencies>
  <version>0.0</version>
@@ -25,7 +40,18 @@
   </resources>
  </build>
  <repositories>
-  <repository>
+   <repository>
+     <id>Datomic</id>
+     <name>Datomic</name>
+     <url>http://files.datomic.com/maven</url>
+     <releases>
+       <enabled>true</enabled>
+     </releases>
+     <snapshots>
+       <enabled>false</enabled>
+     </snapshots>
+   </repository>
+ <repository>
    <id>Sonatype</id>
    <name>Sonatype Release</name>
    <url>http://oss.sonatype.org/content/repositories/releases</url>
