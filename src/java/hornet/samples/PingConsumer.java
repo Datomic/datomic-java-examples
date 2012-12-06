@@ -89,6 +89,10 @@ public class PingConsumer {
             }
             finally
             {
+                if (session != null) {
+                    session.close();
+                }
+
                 // Step 9. Be sure to close our resources!
                 if (sf != null)
                 {
