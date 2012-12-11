@@ -60,6 +60,14 @@
   :db/ident :user/upVotes
   :db/valueType :db.type/ref
   :db/cardinality :db.cardinality/many
+  :db.install/_attribute :db.part/db}
+
+ ;; publish time
+ {:db/id #db/id[:db.part/db]
+  :db/ident :publish/at
+  :db/valueType :db.type/instant
+  :db/cardinality :db.cardinality/one
+  :db/index true
   :db.install/_attribute :db.part/db}]
 
 ;; stories
@@ -72,6 +80,13 @@
  {:db/id #db/id [:db.part/user]
   :story/title "Beating the Averages"
   :story/url "http://www.paulgraham.com/avg.html"}]
+
+;; published stories
+[{:db/id #db/id [:db.part/user]
+  :story/title "codeq"
+  :story/url "http://blog.datomic.com/2012/10/codeq.html"}
+ {:db/id #db/id [:db.part/tx]
+  :publish/at #inst "2012-11-11"}]
 
 ;; users
 [{:db/id #db/id [:db.part/user]
