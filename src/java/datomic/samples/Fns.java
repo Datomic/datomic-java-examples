@@ -31,4 +31,8 @@ public class Fns {
         Peer.createDatabase(uri);
         return Peer.connect(uri);
     }
+
+    public static void printQueryResult(Collection coll) {
+        System.out.println(coll);
+    }
 }
