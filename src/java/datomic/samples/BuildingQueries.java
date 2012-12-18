@@ -54,8 +54,8 @@ public class BuildingQueries {
 
     public static void main(String[] args) throws IOException {
         Connection conn = scratchConnection();
-        transactAllFromResource(conn, "datomic-java-examples/social-news.dtm");
-        transactAllFromResource(conn, "datomic-java-examples/stuarts.dtm");
+        transactAllFromResource(conn, "datomic-java-examples/social-news.edn");
+        transactAllFromResource(conn, "datomic-java-examples/stuarts.edn");
         Database db = conn.db();
 
         queryWithVariableBinding(db);

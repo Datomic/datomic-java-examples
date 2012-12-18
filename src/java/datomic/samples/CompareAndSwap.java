@@ -23,7 +23,7 @@ import static datomic.Peer.tempid;
 public class CompareAndSwap {
     public static void main(String[] args) throws IOException, InterruptedException, ExecutionException {
         Connection conn = scratchConnection();
-        URL url = resource("datomic-java-examples/accounts.dtm");
+        URL url = resource("datomic-java-examples/accounts.edn");
         transactAll(conn, new InputStreamReader(url.openStream()));
 
         Object account = tempid("db.part/user");

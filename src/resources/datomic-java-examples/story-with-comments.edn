@@ -1,0 +1,11 @@
+[{:db/id #db/id[:db.part/user -1]
+  :db/ident :storyWithComments
+  :story/title "Getting Started"
+  :story/url "http://docs.datomic.com/getting-started.html"}
+ {:db/id #db/id[:db.part/user -2]
+  :comment/body "It woud be great to learn about component attributes."
+  :_comments #db/id[:db.part/user -1]}
+ {:db/id #db/id[:db.part/user -3]
+  :comment/body "I agree."
+  :_comments #db/id[:db.part/user -2]}]
+

@@ -23,7 +23,7 @@ public class DatabaseFiltering {
 
     public static void main(String[] args) throws IOException {
         Connection conn = scratchConnection();
-        URL url = resource("datomic-java-examples/social-news.dtm");
+        URL url = resource("datomic-java-examples/social-news.edn");
         transactAll(conn, new InputStreamReader(url.openStream()));
         Database db = conn.db();
 

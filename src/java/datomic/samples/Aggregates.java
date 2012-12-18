@@ -15,7 +15,7 @@ public class Aggregates {
 
     public static void main(String[] args) throws IOException {
         Connection conn = scratchConnection();
-        transactAllFromResource(conn, "datomic-java-examples/bigger-than-pluto.dtm");
+        transactAllFromResource(conn, "datomic-java-examples/bigger-than-pluto.edn");
         Database db = conn.db();
 
         printQueryResult(biggestObjectRadius(db));
