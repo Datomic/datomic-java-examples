@@ -1,4 +1,6 @@
-#!/bin/bash -x -e
+#!/bin/bash -x
+
+set -e
 
 classes=(
   Aggregates
