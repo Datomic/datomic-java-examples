@@ -1,0 +1,20 @@
+#!/bin/bash -x -e
+
+classes=(
+  Aggregates
+  BuildingQueries
+  CompareAndSwap
+  ComponentAttributes
+  DatabaseFiltering
+  Query
+  QueryAsData
+  Trust
+  With
+)
+
+mvn package
+
+for class in "${classes[@]}"
+do
+  mvn exec:java -Dexec.mainClass="datomic.samples.${class}"
+done
