@@ -16,7 +16,7 @@ public class IO {
         List<List> txes = Util.readAll(reader);
         for (java.util.Iterator<List> it = txes.iterator(); it.hasNext(); ) {
             List tx =  it.next();
-            conn.transact(tx);
+            conn.transact(tx).get();
         }
     }
 
