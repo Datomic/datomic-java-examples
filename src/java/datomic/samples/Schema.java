@@ -10,7 +10,6 @@ import static datomic.samples.Fns.solo;
 import java.io.IOException;
 import java.io.StringReader;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -23,6 +22,7 @@ import datomic.samples.Schema.Element.Handler;
 
 public class Schema {
 	public static final String DEFAULT_SCHEMA_TX_ATTRIB_IDENT = ":schemaTx/schemaName";
+	public static final String SCHEMA_TX_ATTRIB_IS_MARKER_TX = ":schemaTx/isMarkerTx";
 
 	public static abstract class Element {
 		public static class Handler {
@@ -701,9 +701,11 @@ public class Schema {
     public static boolean hasSchema(final Database db, final String schemaTxAttribIdent, final String schemaName) {
 		return hasAttrib(db, schemaTxAttribIdent) &&
 				!q("[:find ?tx " +
-					":in $ ?schemaTxAttribIdent ?schemaName " +
-					":where [?tx ?schemaTxAttribIdent ?schemaName] [?tx :db/txInstant]]",
-						db, schemaTxAttribIdent, schemaName).isEmpty();
+					":in $ ?schemaTxAttribIdent ?schemaTxAttribIsMarkerTx ?schemaName " +
+					":where [?tx ?schemaTxAttribIdent ?schemaName]" +
+					"       [?tx :db/txInstant]" +
+					"       [?tx ?schemaTxAttribIsMarkerTx true]]",
+						db, schemaTxAttribIdent, SCHEMA_TX_ATTRIB_IS_MARKER_TX, schemaName).isEmpty();
     }
 
     @SuppressWarnings("unchecked")
@@ -726,30 +728,41 @@ public class Schema {
 		if (txData == null || txData.size() == 0 || txData.iterator().next().size() == 0) {
 			throw new RuntimeException("No transaction data for schema name: " + schemaName);
 		}
-		ensureSchemaTxAttrib(conn, schemaTxAttribIdent);
-		Schema.transact(conn, txData);
-		conn.transact(list(
-				map(":db/id", Peer.tempid(":db.part/tx"), schemaTxAttribIdent, schemaName),
-				map(":db/id", Peer.tempid(":db.part/user")))).get();
+		ensureSchemaTxAttribs(conn, schemaTxAttribIdent);
+		Schema.transact(conn, txData, new Handler(),
+				map(":db/id", Peer.tempid(":db.part/tx"),
+					schemaTxAttribIdent, schemaName,
+					SCHEMA_TX_ATTRIB_IS_MARKER_TX, false));
+		Schema.transact(conn, list(list()), new Handler(),
+				map(":db/id", Peer.tempid(":db.part/tx"),
+					schemaTxAttribIdent, schemaName,
+					SCHEMA_TX_ATTRIB_IS_MARKER_TX, true));
 	}
 
 	public static void transact(final Connection conn, final List<List<Element>> elementTxs) throws InterruptedException, ExecutionException {
     	transact(conn, elementTxs, new Handler());
     }
 
-    public static void transact(final Connection conn, final List<List<Element>> elementTxs, final Handler handler) throws InterruptedException, ExecutionException {
+	public static void transact(final Connection conn, final List<List<Element>> elementTxs,
+			final Handler handler, final Object... appendsForEachTx) throws InterruptedException, ExecutionException {
     	if (handler == null) {
-    		transact(conn, elementTxs, new Handler());
+    		transact(conn, elementTxs, new Handler(), appendsForEachTx);
     		return;
     	}
     	for (List<Element> elementTx : elementTxs) {
-    		final List<Object> tx = new ArrayList<Object>(elementTx.size());
+    		final List<Object> tx = new ArrayList<Object>(elementTx.size() + (appendsForEachTx == null ? 0 : appendsForEachTx.length));
     		for (Element element : elementTx) {
         		final Object txMapOrList = handler.toTxMapOrList(element);
         		if (txMapOrList != null) {
         			tx.add(txMapOrList);
         		}
 			}
+    		if (appendsForEachTx != null) {
+    			for (Object append : appendsForEachTx) {
+					tx.add(append);
+				}
+    		}
+    		System.out.println(tx);
     		conn.transact(tx).get();
 		}
     }
@@ -776,18 +789,27 @@ public class Schema {
     	return sb.toString();
     }
 
-	private static void ensureSchemaTxAttrib(final Connection conn) {
-		ensureSchemaTxAttrib(conn, DEFAULT_SCHEMA_TX_ATTRIB_IDENT);
+	private static void ensureSchemaTxAttribs(final Connection conn) {
+		ensureSchemaTxAttribs(conn, DEFAULT_SCHEMA_TX_ATTRIB_IDENT);
 	}
 
 	@SuppressWarnings("unchecked")
-	private static void ensureSchemaTxAttrib(final Connection conn, final String schemaTxAttribIdent) {
+	private static void ensureSchemaTxAttribs(final Connection conn, final String schemaTxAttribIdent) {
     	if (!hasAttrib(conn.db(), schemaTxAttribIdent)) {
     		try {
     			Schema.transact(conn, list(list(
     					stringAttrib(schemaTxAttribIdent)
 							.doc("Name of schema installed by a transaction")
 							.index())));
+			} catch (Exception e) {
+				throw new RuntimeException(e);
+			}
+    	}
+    	if (!hasAttrib(conn.db(), SCHEMA_TX_ATTRIB_IS_MARKER_TX)) {
+    		try {
+    			Schema.transact(conn, list(list(
+    					booleanAttrib(SCHEMA_TX_ATTRIB_IS_MARKER_TX)
+							.doc("Is this transaction a marker transaction?  If not, it is part of the actual schema."))));
 			} catch (Exception e) {
 				throw new RuntimeException(e);
 			}
