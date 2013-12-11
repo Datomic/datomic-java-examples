@@ -762,7 +762,6 @@ public class Schema {
 					tx.add(append);
 				}
     		}
-    		System.out.println(tx);
     		conn.transact(tx).get();
 		}
     }
