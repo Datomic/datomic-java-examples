@@ -83,8 +83,12 @@ public class PingConsumer {
 
                     // Step 8. Receive the message.
                     ClientMessage messageReceived = messageConsumer.receive();
-                    messageReceived.acknowledge();
-                    System.out.println("Received TextMessage:" + messageReceived.getStringProperty("prop"));
+                    if (messageReceived == null) {
+                        System.out.println("Received a null message");
+                    } else {
+                        messageReceived.acknowledge();
+                        System.out.println("Received TextMessage:" + messageReceived.getStringProperty("prop"));
+                    }
                 }
             }
             finally
