@@ -1,21 +1,24 @@
 package datomic.samples;
 
-import java.util.Collection;
+import datomic.Peer;
 
-import static datomic.Peer.q;
+import java.util.Collection;
+import java.util.List;
+
+import static datomic.Peer.query;
 import static datomic.Util.list;
-import static datomic.samples.Fns.printQueryResult;
+import static datomic.samples.PrettyPrint.print;
 
 public class With {
-    public static Collection incorrectHeadCount() {
-        return q("[:find (sum ?heads)" +
+    public static Object incorrectHeadCount() {
+        return query("[:find (sum ?heads) ." +
                 "  :in [[_ ?heads]]]", monsters);
     }
 
-    public static Collection correctHeadCount() {
-        return q("[:find (sum ?heads)" +
-                "  :with ?monster" +
-                "  :in [[?monster ?heads]]]", monsters);
+    public static Object correctHeadCount() {
+        return query("[:find (sum ?heads) ." +
+                " :with ?monster" +
+                " :in [[?monster ?heads]]]", monsters);
     }
 
     public static final Collection monsters = list(list("Cerberus", 3),
@@ -23,7 +26,8 @@ public class With {
                                                    list("Cyclops", 1),
                                                    list("Chimera", 1));
     public static void main(String[] args) {
-        printQueryResult(incorrectHeadCount());
-        printQueryResult(correctHeadCount());
+        print(incorrectHeadCount());
+        print(correctHeadCount());
+        Peer.shutdown(true);
     }
 }

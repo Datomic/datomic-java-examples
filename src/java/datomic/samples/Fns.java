@@ -32,7 +32,4 @@ public class Fns {
         return Peer.connect(uri);
     }
 
-    public static void printQueryResult(Collection coll) {
-        System.out.println(coll);
-    }
 }

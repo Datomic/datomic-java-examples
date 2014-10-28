@@ -4,12 +4,11 @@ import datomic.Connection;
 import datomic.Database;
 
 import java.io.IOException;
-import java.util.Collection;
 
-import static datomic.Peer.q;
-import static datomic.samples.Fns.printQueryResult;
+import static datomic.Peer.query;
 import static datomic.samples.Fns.scratchConnection;
 import static datomic.samples.IO.transactAllFromResource;
+import static datomic.samples.PrettyPrint.print;
 
 public class Aggregates {
 
@@ -18,25 +17,25 @@ public class Aggregates {
         transactAllFromResource(conn, "datomic-java-examples/bigger-than-pluto.edn");
         Database db = conn.db();
 
-        printQueryResult(biggestObjectRadius(db));
-        printQueryResult(randomObject(db));
-        printQueryResult(sampleFiveObjects(db));
+        print(biggestObjectRadius(db));
+        print(randomObject(db));
+        print(sampleFiveObjects(db));
 
     }
 
-    public static Collection biggestObjectRadius(Database db) {
-        return q("[:find (max ?radius)" +
-                "  :where [_ :object/meanRadius ?radius]]", db);
+    public static Object biggestObjectRadius(Database db) {
+        return query("[:find (max ?radius) ." +
+                     " :where [_ :object/meanRadius ?radius]]", db);
     }
 
-    public static Collection randomObject(Database db) {
-        return q("[:find (rand ?name)" +
-                "  :where [?e :object/name ?name]]", db);
+    public static Object randomObject(Database db) {
+        return query("[:find (rand ?name) ." +
+                     " :where [?e :object/name ?name]]", db);
     }
 
-    public static Collection sampleFiveObjects(Database db) {
-        return q("[:find (sample 5 ?name)" +
-                "  :with ?e" +
-                "  :where [?e :object/name ?name]]", db);
+    public static Object sampleFiveObjects(Database db) {
+        return query("[:find (sample 5 ?name) ." +
+                     " :with ?e" +
+                     " :where [?e :object/name ?name]]", db);
     }
 }
