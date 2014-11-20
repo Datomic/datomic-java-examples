@@ -16,21 +16,6 @@ import static datomic.samples.Schema.cardinality;
 public class Query {
 
     /**
-     * Query returning a single entity
-     *
-     * @param query   Datomic query that should return a single entity id, or none.
-     * @param db      Database value passed to q
-     * @param arg     Arg passed to q
-     * @return        An entity or null
-     */
-    public static Object qe(Object query, Database db, Object arg) {
-        Object eid = solo(Fns.solo(q(query, db, arg)));
-        if (eid == null)
-            return null;
-        return db.entity(eid);
-    }
-
-    /**
      * Function intended for use inside a Datomic query
      *
      * @param db      a database value
@@ -41,18 +26,17 @@ public class Query {
      *                on cardinality of the attribute, and whether any values are present
      */
     public static Object maybe(Object db, Object e, Object attr, Object ifNot) {
-        Collection<List<Object>> result = q("[:find ?v " +
-                                             ":in $ ?e ?a " +
-                                             ":where [?e ?a ?v]]", db, e, attr);
+        Collection<List<Object>> result = query("[:find ?v " +
+                                                 ":in $ ?e ?a " +
+                                                 ":where [?e ?a ?v]]", db, e, attr);
         if (result.isEmpty()) {
             return ifNot;
         } else {
             Object card = cardinality(db, attr);
-            if (card.equals(CARDINALITY_ONE)) return solo(solo(result));
+            if (card.equals(CARDINALITY_ONE)) return result.iterator().next(); // only one in list
             Set acc = new HashSet();
             for (Iterator<List<Object>> iterator = result.iterator(); iterator.hasNext(); ) {
-                List<Object> next =  iterator.next();
-                acc.add(solo(next));
+                acc.add(iterator.next());
             }
             return Collections.unmodifiableSet(acc);
         }
