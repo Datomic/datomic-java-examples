@@ -8,7 +8,6 @@ import java.util.*;
 import static datomic.Peer.*;
 import static datomic.Util.read;
 import static datomic.samples.Fns.scratchConnection;
-import static datomic.samples.Fns.solo;
 import static datomic.samples.Schema.CARDINALITY_MANY;
 import static datomic.samples.Schema.CARDINALITY_ONE;
 import static datomic.samples.Schema.cardinality;

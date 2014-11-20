@@ -10,19 +10,6 @@ import java.util.UUID;
 
 public class Fns {
     /**
-     * Returns single item in the collection, null if collection empty, throws if collection
-     * has more than one item.
-     */
-    public static Object solo(Object c) {
-        if (c == null) return null;
-        Iterator it = ((Collection)c).iterator();
-        if (!it.hasNext()) return null;
-        Object result = it.next();
-        if (it.hasNext()) throw new RuntimeException("Expected one item, got more than one");
-        return result;
-    }
-
-    /**
      * Connection to a fresh in-memory Datomic database.
      * @return
      */

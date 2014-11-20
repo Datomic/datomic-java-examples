@@ -4,7 +4,6 @@ import datomic.Database;
 
 import static datomic.Peer.query;
 import static datomic.Util.read;
-import static datomic.samples.Fns.solo;
 
 public class Schema {
     public static final Object CARDINALITY_ONE = read(":db.cardinality/one");
