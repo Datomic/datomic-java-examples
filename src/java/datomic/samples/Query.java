@@ -154,7 +154,7 @@ public class Query {
         System.out.println(res);
         pause();
 
-        System.out.println("Count of artists from Canada who released an album in 1970 using 'or-join'");
+        System.out.println("Count of releases from Canadian artists or the year 1970 using 'or-join'");
         res = Peer.query("[:find (count ?release) . " +
                          " :where [?release :release/name] " +
                          " (or-join [?release] " +
