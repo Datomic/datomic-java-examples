@@ -65,7 +65,57 @@ public class Query {
                               "       [?release :release/name ?release-name]]",
                               db, Util.list("Paul McCartney", "George Harrison"));
         pause();
-                              
+
+        System.out.println("This query accepts a list of relations, also a list, and destructures the arguments in " +
+                           "the :in clause.");
+        results = Peer.query("[:find ?release " +
+                              ":in $ [[?artist-name ?release-name]] " +
+                              ":where [?artist :artist/name ?artist-name] " +
+                              "       [?release :release/artists ?artist] " +
+                              "       [?release :release/name ?release-name]]",
+                              db, Util.list(Util.list("John Lennon", "Mind Games"),
+                                            Util.list("Paul McCartney", "Ram")));
+        System.out.println(results);
+        pause();
+                                              
+        System.out.println("This query returns a collection of relations, all artists and their releases.");
+        results = Peer.query("[:find ?artist-name ?release-name " +
+                              ":where [?release :release/name ?release-name] " +
+                              "       [?release :release/artists ?artist] " +
+                              "       [?artist :artist/name ?artist-name]]",
+                              db);
+        System.out.println(results);
+        pause();
+
+        System.out.println("This query returns a list of releases by using a find specification.");
+        results = Peer.query("[:find [?release-name ...]" +
+                             " :in $ ?artist-name " +
+                             " :where [?artist :artist/name ?artist-name] " +
+                             "        [?release :release/artists ?artist] " +
+                             "        [?release :release/name ?release-name]]",
+                             db, "John Lennon");
+        System.out.println(results);
+        pause();
+
+        System.out.println("This query returns values from multiple attributes to provide artist's start date.");
+        results = Peer.query("[:find [?year ?month ?day] " +
+                             " :in $ ?name " +
+                             " :where [?artist :artist/name ?name] " +
+                             "        [?artist :artist/startDay ?day] " +
+                             "        [?artist :artist/startMonth ?month] " +
+                             "        [?artist :artist/startYear ?year]]",
+                             db, "John Lennon");
+        System.out.println(results);
+        pause();
+
+        System.out.println("Return just the year of start date using a scalar find specification.");
+        Long year = Peer.query("[:find ?year . " +
+                               " :in $ ?name " +
+                               " :where [?artist :artist/name ?name] " +
+                               "        [?artist :artist/startYear ?year]]",
+                               db, "John Lennon");
+        System.out.println(year);
+        pause();
 
         System.out.println("Total number of artists without :artist/country attribute.");
         Integer res = Peer.query("[:find (count ?eid) . " +
