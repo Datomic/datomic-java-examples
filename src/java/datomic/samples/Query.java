@@ -30,10 +30,10 @@ public class Query {
         pause();
 
         System.out.println("Total number of artists without :artist/country attribute.");
-        Long res = Peer.query("[:find (count ?eid) ." +
-                               ":where [?eid :artist/name] " +
-                                      "(not [?eid :artist/country])]",
-                              db);
+        Integer res = Peer.query("[:find (count ?eid) . " +
+                                  ":where [?eid :artist/name] " +
+                                         "(not [?eid :artist/country])]",
+                                 db);
         System.out.println(res);
         pause();
 
