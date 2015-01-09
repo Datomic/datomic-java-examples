@@ -135,6 +135,35 @@ public class Query {
         System.out.println(res);
         pause();
 
+        System.out.println("Use not-join to bind variable in subquery. Artists w/o releases in 1970.");
+        res = Peer.query("[:find (count ?artist) . " +
+                          ":where [?artist :artist/name] " +
+                          "(not-join [?artist] " +
+                          "  [?release :release/artists ?artist] " +
+                          "  [?release :release/year 1970])]",
+                          db);
+        System.out.println(res);
+        pause();
+
+        System.out.println("Total of artists who are a group or female by use of 'or'.");
+        res = Peer.query("[:find (count ?artist) . " +
+                         " :where (or [?artist :artist/type :artist.type/group] " +
+                         "        (and [?artist :artist/type :artist.type/person] " +
+                         "             [?artist :artist/gender :artist.gender/female]))]",
+                         db);
+        System.out.println(res);
+        pause();
+
+        System.out.println("Count of artists from Canada who released an album in 1970 using 'or-join'");
+        res = Peer.query("[:find (count ?release) . " +
+                         " :where [?release :release/name] " +
+                         " (or-join [?release] " +
+                         "   (and [?release :release/artists ?artist] " +
+                         "        [?artist :artist/country :country/CA]) " +
+                         "   [?release :release/year 1970])]",
+                         db);
+        System.out.println(res);
+        pause();
     }
 
     private static final Scanner scanner = new Scanner(System.in);
