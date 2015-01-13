@@ -164,6 +164,39 @@ public class Query {
                          db);
         System.out.println(res);
         pause();
+
+
+        System.out.println("Track name and duration in minutes using function call in query.");
+        results = Peer.query("[:find ?track-name ?minutes " +
+                             ":in $ ?artist-name " +
+                             ":where [?artist :artist/name ?artist-name] " +
+                             "       [?track :track/artists ?artist] " +
+                             "       [?track :track/duration ?millis] " +
+                             "       [(quot ?millis 60000) ?minutes] " +
+                             "       [?track :track/name ?track-name]]",
+                             db, "John Lennon");
+        System.out.println(results);
+        pause();
+
+        // Can't nest expression clauses
+        String QueryFail = "[:find ?celsius . " +
+                           " :in ?fahrenheit " +
+                           " :where [(/ (- ?fahrenheit 32) 1.8) ?celsius]]";
+        Integer QueryFailInput = 212;
+
+        System.out.println("Function calls without nesting:");
+        Double celsius = Peer.query("[:find ?celsius . " +
+                                    " :in ?fahrenheit " +
+                                    " :where [(- ?fahrenheit 32) ?f-32] " +
+                                    "        [(/ ?f-32 1.8) ?celsius]]",
+                         212);
+        System.out.println(celsius);
+        pause();
+
+
+
+
+
     }
 
     private static final Scanner scanner = new Scanner(System.in);
