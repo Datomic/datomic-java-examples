@@ -193,6 +193,64 @@ public class Query {
         System.out.println(celsius);
         pause();
 
+        System.out.println("get-else example:");
+        results = Peer.query("[:find ?artist-name ?year " +
+                             " :in $ [?artist-name ...] " +
+                             " :where [?artist :artist/name ?artist-name] " +
+                             "        [(get-else $ ?artist :artist/startYear \"N/A\") ?year]]",
+                             db, Util.list("Crosby, Stills & Nash", "Crosby & Nash"));
+        System.out.println(results);
+        pause();
+
+        System.out.println("get-some example:");
+        results = Peer.query("[:find [?e ?attr ?name] " +
+                             ":in $ ?e " +
+                             ":where [(get-some $ ?e :country/name :artist/name) [?attr ?name]]]",
+                             db, Util.read(":country/US"));
+        System.out.println(results);
+        pause();
+
+        System.out.println("fulltext example returns info for songs with 'Jane' in the title.");
+        results = Peer.query("[:find ?entity ?name ?tx ?score " +
+                             " :in $ ?search " + 
+                             " :where [(fulltext $ :artist/name ?search) [[?entity ?name ?tx ?score]]]]",
+                             db, "Jane");
+        System.out.println(results);
+        pause();
+
+        System.out.println("'missing' query finds artists without start year.");
+        results = Peer.query("[:find ?name " +
+                             " :where [?artist :artist/name ?name] " +
+                             "        [(missing? $ ?artist :artist/startYear)]]",
+                             db);
+        System.out.println(results);
+        pause();
+
+        System.out.println("This query finds transactions using the Log API.");
+        results = Peer.query("[:find [?tx ...] " +
+                             " :in ?log " +
+                             " :where [(tx-ids ?log 1000 1050) [?tx ...]]]",
+                             conn.log());
+        System.out.println(results);
+        pause();
+
+        System.out.println("This query finds information about a transaction using the Log API.");
+        results = Peer.query("[:find [?e ...] " +
+                             " :in ?log ?tx " +
+                             " :where [(tx-data ?log ?tx) [[?e]]]]",
+                             conn.log(), 13194139534312L);
+        System.out.println(results);
+        pause();
+
+
+        System.out.println("Calling a Java static method in a query.");
+        results = Peer.query("[:find ?k ?v " +
+                             " :where [(System/getProperties) [[?k ?v]]]])");
+        System.out.println(results);
+        pause();
+
+
+
 
 
 
