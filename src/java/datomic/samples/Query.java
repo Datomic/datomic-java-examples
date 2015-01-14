@@ -245,15 +245,175 @@ public class Query {
 
         System.out.println("Calling a Java static method in a query.");
         results = Peer.query("[:find ?k ?v " +
-                             " :where [(System/getProperties) [[?k ?v]]]])");
+                             " :where [(System/getProperties) [[?k ?v]]]]");
+        System.out.println(results);
+        pause();
+
+        System.out.println("Calling a Java instance method in a query.");
+        results = Peer.query("[:find ?k ?v " +
+                             " :where [(System/getProperties) [[?k ?v]]]]");
+        System.out.println(results);
+        pause();
+
+        System.out.println("Calling Clojure functions");
+        results = Peer.query("[:find [?prefix ...] " +
+                             " :in [?word ...] " +
+                             " :where [(subs ?word 0 5) ?prefix]]",
+                             Util.list("hello", "antidisestablishmentarianism"));
         System.out.println(results);
         pause();
 
 
+        System.out.println("Attr bound by entity ID, query for ident.");
+        results = Peer.query("[:find [?aname ...] " +
+                             " :where [?attr 42 _] " +
+                             "        [?attr :db/ident ?aname]]",
+                             db);
+        System.out.println(results);
+        pause();
+
+        System.out.println("Avoid dynamic attr. specs unless you really need them.");
+//        results = Peer.query("[:find [?aname ...] " +
+//                             " :in $ [?property ...] " +
+//                             " :where [?attr ?property _] " +
+//                             "        [?attr :db/ident ?aname]]",
+//                             db, Util.read(":db/unique"));
+//        System.out.println(results);
+//        pause();
+
+        System.out.println("The following three queries are equivalent...");
+        System.out.println("This one retrieves an entity by lookup ref.");
+        results = Peer.query("[:find [?artist-name ...] " +
+                             " :in $ ?country" +
+                             " :where [?artist :artist/name ?artist-name] " +
+                             "        [?artist :artist/country ?country]]",
+                             db, Util.list(Util.read(":country/name"), "Belgium"));
+        System.out.println(results);
+        pause();
+
+        System.out.println("This one retrieves the same entity by ident.");
+        results = Peer.query("[:find [?artist-name ...] " +
+                             " :in $ ?country" +
+                             " :where [?artist :artist/name ?artist-name] " +
+                             "        [?artist :artist/country ?country]]",
+                             db, Util.read(":country/BE"));
+        System.out.println(results);
+        pause();
+
+        System.out.println("This one retrieves the same entity by its entity ID (Long)");
+        results = Peer.query("[:find [?artist-name ...] " +
+                             " :in $ ?country" +
+                             " :where [?artist :artist/name ?artist-name] " +
+                             "        [?artist :artist/country ?country]]",
+                             db, 17592186045438L);
+        System.out.println(results);
+        pause();
+
+        System.out.println("This query doesn't work as intended.");
+        results = Peer.query("[:find [?artist-name ...] " +
+                             " :in $ ?country [?reference ...] " +
+                             " :where [?artist :artist/name ?artist-name] " +
+                             "        [?artist ?reference ?country]]",
+                             db, Util.read(":country/BE"), Util.list(Util.read(":artist/country")));
+
+        System.out.println(results);
+        pause();
+
+        System.out.println("We fix it by manually resolving the ident to its entity id.");
+//      results = Peer.query("[:find [?artist-name ...] " +
+//                           " :in $ ?country [?reference ...] " +
+//                           " :where [(datomic.api/entid $ ?country) ?country-id] " +
+//                           "        [?artist :artist/name ?artist-name] " +
+//                           "        [?artist ?reference ?country-id]]",
+//                           db, Util.read(":country/BE"), Util.list(Util.read(":artist/country")));
+//      System.out.println(results);
+//      pause();
+
+        System.out.println("We have to use ':with' to get duplicate values as Datomic query returns sets by default.");
+        Long heads = Peer.query("[:find (sum ?heads) . " +
+                                " :in [[_ ?heads]]]",
+                                Util.list(Util.list("Cerberus", 3),
+                                          Util.list("Cyclops", 1),
+                                          Util.list("Medusa", 1),
+                                          Util.list("Chimera", 1)));
+        System.out.println("First, incorrect results: ");
+        System.out.println(heads);
+        pause();
+
+        System.out.println("This time, fixed with ':with': ");
+        heads = Peer.query("[:find (sum ?heads) . " +
+                           " :with ?monster " +
+                           " :in [[?monster ?heads]]]",
+                           Util.list(Util.list("Cerberus", 3),
+                                     Util.list("Cyclops", 1),
+                                     Util.list("Medusa", 1),
+                                     Util.list("Chimera", 1)));
+        System.out.println(heads);
+        pause();
+
+        // Aggregate examples
+        System.out.println("Using 'max' and 'min' aggregates to get shortest and longest durations.");
+        results = Peer.query("[:find [(min ?dur) (max ?dur)] " +
+                             " :where [_ :track/duration ?dur]]",
+                             db);
+        System.out.println(results);
+        pause();
+
+        System.out.println("Sum of all track counts.");
+        Long sum = Peer.query("[:find (sum ?count) . " +
+                              " :with ?medium " +
+                              " :where [?medium :medium/trackCount ?count]]",
+                              db);
+        System.out.println(sum);
+        pause();
+
+        System.out.println("Counting with and without count-distinct: ");
+        results = Peer.query("[:find [(count ?name) (count-distinct ?name)] " +
+                             " :with ?artist " +
+                             " :where [?artist :artist/name ?name]]",
+                             db);
+        System.out.println(results);
+        pause();
+
+        System.out.println("Count of tracks.");
+        results = Peer.query("[:find (count ?track) " +
+                             " :where [?track :track/name]]",
+                             db);
+        System.out.println(results);
+        pause();
+
+        System.out.println("Some basic stats...");
+        results = Peer.query("[:find ?year (median ?namelen) (avg ?namelen) (stddev ?namelen) " +
+                             " :with ?track " +
+                             " :where [?track :track/name ?name] " +
+                             "        [(count ?name) ?namelen] " +
+                             "        [?medium :medium/tracks ?track] " +
+                             "        [?release :release/media ?medium] " +
+                             "        [?release :release/year ?year]]",
+                             db);
+        System.out.println(results);
+        pause();
 
 
+        System.out.println("Set of distinct values...");
+        results = Peer.query("[:find (distinct ?v) . " +
+                             " :in [?v ...]] ",
+                             Util.list(1, 1, 2, 2, 2, 3));
+        System.out.println(results);
+        pause();
 
+        System.out.println("Five shortest and five longest track durations in milliseconds.");
+        results = Peer.query("[:find [(min 5 ?millis) (max 5 ?millis)] " +
+                             " :where [?track :track/duration ?millis]]",
+                             db);
+        System.out.println(results);
+        pause();
 
+        System.out.println("Two random names using rand (duplicates tolerated) and sample (only distinct)");
+        results = Peer.query("[:find [(rand 2 ?name) (sample 2 ?name)] " +
+                             " :where [_ :artist/name ?name]]",
+                             db);
+        System.out.println(results);
 
     }
 
