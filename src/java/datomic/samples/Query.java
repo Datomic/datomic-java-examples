@@ -117,21 +117,11 @@ public class Query {
         System.out.println(year);
         pause();
 
-        System.out.println("Total number of artists without :artist/country attribute.");
+        System.out.println("Total number of artists who aren't Canadian.");
         Integer res = Peer.query("[:find (count ?eid) . " +
                                   ":where [?eid :artist/name] " +
-                                         "(not [?eid :artist/country])]",
+                                         "(not [?eid :artist/country :country/CA])]",
                                  db);
-        System.out.println(res);
-        pause();
-
-        System.out.println("Number of artists missing either country or gender. "+
-                           "(negation of conjunction reads 'not (clause1 and clause2)'");
-        res = Peer.query("[:find (count ?eid) . " +
-                          ":where [?eid :artist/name] " +
-                                 "(not [?eid :artist/country] " +
-                                      "[?eid :artist/gender])]",
-                         db);
         System.out.println(res);
         pause();
 
@@ -142,6 +132,16 @@ public class Query {
                           "  [?release :release/artists ?artist] " +
                           "  [?release :release/year 1970])]",
                           db);
+        System.out.println(res);
+        pause();
+
+        System.out.println("Number of 'Live at Carnegie Hall' releases not by Bill Withers");
+        res = Peer.query("[:find (count ?r) . " +
+                          ":where [?r :release/name \"Live at Carnegie Hall\"] " +
+                                 "(not-join [?r] " +
+                                   "[?r :release/artists ?a] " +
+                                   "[?a :artist/name \"Bill Withers\"])]",
+                         db);
         System.out.println(res);
         pause();
 
