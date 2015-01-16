@@ -1,6 +1,6 @@
 ## Datomic Java Examples
 
-Under construction, nothing to see here
+Code examples for [Datomic's Java API](http://docs.datomic.com/javadoc/index.html).
 
 ## Questions, Feedback?
 
@@ -9,6 +9,12 @@ For specific feedback on the examples, please create an
 
 For questions about Datomic, try the [public mailing
 list](http://groups.google.com/group/datomic).
+
+## Contributing
+
+This library is developed internally by Cognitect. Issues can be filed using
+[Github Issues](https://github.com/Datomic/datomic-java-examples/issues). We do
+not accept pull request or patches.
 
 ## License
 
