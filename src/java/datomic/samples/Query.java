@@ -251,7 +251,8 @@ public class Query {
 
         System.out.println("Calling a Java instance method in a query.");
         results = Peer.query("[:find ?k ?v " +
-                             " :where [(System/getProperties) [[?k ?v]]]]");
+                             " :where [(System/getProperties) [[?k ?v]]]" +
+                             "        [(.endsWith ?k \"version\")]]");
         System.out.println(results);
         pause();
 
