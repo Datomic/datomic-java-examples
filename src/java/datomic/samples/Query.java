@@ -1,9 +1,6 @@
 package datomic.samples;
 
-import datomic.Connection;
-import datomic.Database;
-import datomic.Peer;
-import datomic.Util;
+import datomic.*;
 
 import java.util.Scanner;
 import java.util.Collection;
@@ -415,7 +412,32 @@ public class Query {
                              " :where [_ :artist/name ?name]]",
                              db);
         System.out.println(results);
+        pause();
 
+        System.out.println("Building a QueryRequest.");
+        QueryRequest<Collection<Object>> queryRequest = QueryRequest.<Collection<Object>>create("[:find ?release-name " +
+                                                                                                " :in $ ?artist-name " +
+                                                                                                " :where [?artist :artist/name ?artist-name] " +
+                                                                                                "        [?release :release/artists ?artist] " +
+                                                                                                "        [?release :release/name ?release-name]]",
+                                                                                                db, "John Lennon");
+        results = Peer.query(queryRequest);
+        System.out.println(results);
+        pause();
+
+        System.out.println("Timeout a long running query.");
+        queryRequest = QueryRequest.<Collection<Object>>create("[:find ?track-name " +
+                                                               " :in $ ?artist-name " +
+                                                               " :where [?track :track/artists ?artist] " +
+                                                               "        [?track :track/name ?track-name] " +
+                                                               "        [?artist :artist/name ?artist-name]]",
+                                                               db, "John Lennon").timeout(100);
+
+        try {
+            Peer.query(queryRequest);
+        } catch (Throwable t) {
+            System.out.println("Caught expected exception: " + t.getMessage());
+        }
     }
 
     private static final Scanner scanner = new Scanner(System.in);
