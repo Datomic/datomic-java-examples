@@ -2,6 +2,7 @@ package datomic.samples;
 
 import datomic.*;
 
+import java.util.List;
 import java.util.Scanner;
 import java.util.Collection;
 
@@ -414,16 +415,55 @@ public class Query {
         System.out.println(results);
         pause();
 
-        System.out.println("Building a QueryRequest.");
-        QueryRequest queryRequest = QueryRequest.create("[:find ?release-name " +
+        System.out.println("Using a QueryRequest to return a relation");
+        QueryRequest queryRequest = QueryRequest.create("[:find ?artist-name ?release-name " +
                                                         " :in $ ?artist-name " +
                                                         " :where [?artist :artist/name ?artist-name] " +
                                                         "        [?release :release/artists ?artist] " +
                                                         "        [?release :release/name ?release-name]]",
                                                         db, "John Lennon");
-        results = Peer.query(queryRequest);
-        System.out.println(results);
+        Collection<List<String>> queryResultRelation = Peer.query(queryRequest);
+
+        System.out.println(queryResultRelation);
         pause();
+
+        System.out.println("Using a QueryRequest to return a collection");
+        queryRequest = QueryRequest.create("[:find [?release-name ...]" +
+                                           " :in $ ?artist-name " +
+                                           " :where [?artist :artist/name ?artist-name] " +
+                                           "        [?release :release/artists ?artist] " +
+                                           "        [?release :release/name ?release-name]]",
+                                           db, "John Lennon");
+        Collection<String> queryResultCollection = Peer.query(queryRequest);
+
+        System.out.println(queryResultCollection);
+        pause();
+
+        System.out.println("Using a QueryRequest to return a single tuple");
+        queryRequest = QueryRequest.create("[:find [?year ?month ?day]" +
+                                           " :in $ ?name" +
+                                           " :where [?artist :artist/name ?name] " +
+                                           "        [?artist :artist/startDay ?day] " +
+                                           "        [?artist :artist/startMonth ?month] " +
+                                           "        [?artist :artist/startYear ?year]]",
+                                           db, "John Lennon");
+        List<Long> queryResultSingleTuple = Peer.query(queryRequest);
+
+        System.out.println(queryResultSingleTuple);
+        pause();
+
+
+        System.out.println("Using a QueryRequest to return a single scalar");
+        queryRequest = QueryRequest.create("[:find ?year . " +
+                                           " :in $ ?name " +
+                                           " :where [?artist :artist/name ?name] " +
+                                           "        [?artist :artist/startYear ?year]]",
+                                           db, "John Lennon");
+        Long queryResultSingleScalar = Peer.query(queryRequest);
+
+        System.out.println(queryResultSingleScalar);
+        pause();
+
 
         System.out.println("Timeout a long running query.");
         queryRequest = QueryRequest.create("[:find ?track-name " +
