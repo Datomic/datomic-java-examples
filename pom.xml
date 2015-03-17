@@ -4,7 +4,7 @@
  <dependencies>
     <dependency>
       <groupId>com.datomic</groupId>
-      <artifactId>datomic-pro</artifactId>
+      <artifactId>datomic-free</artifactId>
       <version>0.9.5153</version>
       <exclusions>
         <exclusion>
