@@ -415,28 +415,37 @@ public class Query {
         pause();
 
         System.out.println("Building a QueryRequest.");
-        QueryRequest<Collection<Object>> queryRequest = QueryRequest.<Collection<Object>>create("[:find ?release-name " +
-                                                                                                " :in $ ?artist-name " +
-                                                                                                " :where [?artist :artist/name ?artist-name] " +
-                                                                                                "        [?release :release/artists ?artist] " +
-                                                                                                "        [?release :release/name ?release-name]]",
-                                                                                                db, "John Lennon");
+        QueryRequest queryRequest = QueryRequest.create("[:find ?release-name " +
+                                                        " :in $ ?artist-name " +
+                                                        " :where [?artist :artist/name ?artist-name] " +
+                                                        "        [?release :release/artists ?artist] " +
+                                                        "        [?release :release/name ?release-name]]",
+                                                        db, "John Lennon");
         results = Peer.query(queryRequest);
         System.out.println(results);
         pause();
 
         System.out.println("Timeout a long running query.");
-        queryRequest = QueryRequest.<Collection<Object>>create("[:find ?track-name " +
-                                                               " :in $ ?artist-name " +
-                                                               " :where [?track :track/artists ?artist] " +
-                                                               "        [?track :track/name ?track-name] " +
-                                                               "        [?artist :artist/name ?artist-name]]",
-                                                               db, "John Lennon").timeout(100);
+        queryRequest = QueryRequest.create("[:find ?track-name " +
+                                           " :in $ ?artist-name " +
+                                           " :where [?track :track/artists ?artist] " +
+                                           "        [?track :track/name ?track-name] " +
+                                           "        [?artist :artist/name ?artist-name]]",
+                                           db, "John Lennon").timeout(100);
 
+        Exception error = null;
         try {
             Peer.query(queryRequest);
-        } catch (Throwable t) {
-            System.out.println("Caught expected exception: " + t.getMessage());
+        } catch (Exception e) {
+            error = e;
+            if (error.getMessage().contains("Query canceled")) {
+                System.out.println("Caught expected timeout exception: " + error.getMessage());
+            } else {
+                throw new RuntimeException(e);
+            }
+        }
+        if (error == null) {
+            System.out.println("Expected query to timeout.");
         }
     }
 
@@ -446,6 +455,8 @@ public class Query {
         if (System.getProperty("NOPAUSE") == null) {
             System.out.println("\nPress enter to continue...");
             scanner.nextLine();
+
         }
     }
 }
+
