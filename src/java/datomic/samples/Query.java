@@ -1,10 +1,8 @@
 package datomic.samples;
 
-import datomic.Connection;
-import datomic.Database;
-import datomic.Peer;
-import datomic.Util;
+import datomic.*;
 
+import java.util.List;
 import java.util.Scanner;
 import java.util.Collection;
 
@@ -415,7 +413,80 @@ public class Query {
                              " :where [_ :artist/name ?name]]",
                              db);
         System.out.println(results);
+        pause();
 
+        System.out.println("Using a QueryRequest to return a relation");
+        QueryRequest queryRequest = QueryRequest.create("[:find ?artist-name ?release-name " +
+                                                        " :in $ ?artist-name " +
+                                                        " :where [?artist :artist/name ?artist-name] " +
+                                                        "        [?release :release/artists ?artist] " +
+                                                        "        [?release :release/name ?release-name]]",
+                                                        db, "John Lennon");
+        Collection<List<String>> queryResultRelation = Peer.query(queryRequest);
+
+        System.out.println(queryResultRelation);
+        pause();
+
+        System.out.println("Using a QueryRequest to return a collection");
+        queryRequest = QueryRequest.create("[:find [?release-name ...]" +
+                                           " :in $ ?artist-name " +
+                                           " :where [?artist :artist/name ?artist-name] " +
+                                           "        [?release :release/artists ?artist] " +
+                                           "        [?release :release/name ?release-name]]",
+                                           db, "John Lennon");
+        Collection<String> queryResultCollection = Peer.query(queryRequest);
+
+        System.out.println(queryResultCollection);
+        pause();
+
+        System.out.println("Using a QueryRequest to return a single tuple");
+        queryRequest = QueryRequest.create("[:find [?year ?month ?day]" +
+                                           " :in $ ?name" +
+                                           " :where [?artist :artist/name ?name] " +
+                                           "        [?artist :artist/startDay ?day] " +
+                                           "        [?artist :artist/startMonth ?month] " +
+                                           "        [?artist :artist/startYear ?year]]",
+                                           db, "John Lennon");
+        List<Long> queryResultSingleTuple = Peer.query(queryRequest);
+
+        System.out.println(queryResultSingleTuple);
+        pause();
+
+
+        System.out.println("Using a QueryRequest to return a single scalar");
+        queryRequest = QueryRequest.create("[:find ?year . " +
+                                           " :in $ ?name " +
+                                           " :where [?artist :artist/name ?name] " +
+                                           "        [?artist :artist/startYear ?year]]",
+                                           db, "John Lennon");
+        Long queryResultSingleScalar = Peer.query(queryRequest);
+
+        System.out.println(queryResultSingleScalar);
+        pause();
+
+
+        System.out.println("Timeout a long running query.");
+        queryRequest = QueryRequest.create("[:find ?track-name " +
+                                           " :in $ ?artist-name " +
+                                           " :where [?track :track/artists ?artist] " +
+                                           "        [?track :track/name ?track-name] " +
+                                           "        [?artist :artist/name ?artist-name]]",
+                                           db, "John Lennon").timeout(100);
+
+        Exception error = null;
+        try {
+            Peer.query(queryRequest);
+        } catch (Exception e) {
+            error = e;
+            if (error.getMessage().contains("Query canceled")) {
+                System.out.println("Caught expected timeout exception: " + error.getMessage());
+            } else {
+                throw new RuntimeException(e);
+            }
+        }
+        if (error == null) {
+            System.out.println("Expected query to timeout.");
+        }
     }
 
     private static final Scanner scanner = new Scanner(System.in);
@@ -424,6 +495,8 @@ public class Query {
         if (System.getProperty("NOPAUSE") == null) {
             System.out.println("\nPress enter to continue...");
             scanner.nextLine();
+
         }
     }
 }
+
