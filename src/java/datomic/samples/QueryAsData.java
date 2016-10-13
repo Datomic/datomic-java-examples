@@ -18,7 +18,7 @@ import static datomic.samples.Fns.scratchConnection;
 
 public class QueryAsData {
     public static Object tempid() {
-        return Peer.tempid("db.part/user");
+        return Peer.tempid(":db.part/user");
     }
     public static void main(String[] args) throws IOException {
         Connection conn = scratchConnection();
@@ -29,9 +29,9 @@ public class QueryAsData {
 
         // tx data is plain lists and maps
         conn.transact(
-            list(map("db/id", tempid(), "user/firstName", "Stewart", "user/lastName", "Brand"),
-                 map("db/id", tempid(), "user/firstName", "Stuart", "user/lastName", "Smalley"),
-                 map("db/id", tempid(), "user/firstName", "John", "user/lastName", "Stewart")));
+            list(map(":db/id", tempid(), ":user/firstName", "Stewart", ":user/lastName", "Brand"),
+                 map(":db/id", tempid(), ":user/firstName", "Stuart", ":user/lastName", "Smalley"),
+                 map(":db/id", tempid(), ":user/firstName", "John", ":user/lastName", "Stewart")));
 
         Database db = conn.db();
 

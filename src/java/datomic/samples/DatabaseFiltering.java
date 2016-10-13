@@ -17,7 +17,7 @@ import static datomic.Peer.*;
 
 public class DatabaseFiltering {
     public static Object tempid() {
-        return Peer.tempid("db.part/user");
+        return Peer.tempid(":db.part/user");
     }
 
     public static final String storyQuery = "[:find (count ?e) :where [?e :story/url]]";

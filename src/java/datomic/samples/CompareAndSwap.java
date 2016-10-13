@@ -26,16 +26,16 @@ public class CompareAndSwap {
         URL url = resource("datomic-java-examples/accounts.edn");
         transactAll(conn, new InputStreamReader(url.openStream()));
 
-        Object account = tempid("db.part/user");
-        Map txResult = conn.transact(list(map("db/id", account, "account/balance", 100))).get();
+        Object account = tempid(":db.part/user");
+        Map txResult = conn.transact(list(map(":db/id", account, ":account/balance", 100))).get();
         account = Peer.resolveTempid((Database)txResult.get(DB_AFTER), txResult.get(TEMPIDS),  account);
 
         System.out.println("CAS from 100->110 should succeed");
-        conn.transact(list(list("db.fn/cas", account, "account/balance", 100, 110))).get();
+        conn.transact(list(list(":db.fn/cas", account, "account/balance", 100, 110))).get();
 
         System.out.println("CAS from 100->120 should fail");
         try {
-            conn.transact(list(list("db.fn/cas", account, "account/balance", 100, 120))).get();
+            conn.transact(list(list(":db.fn/cas", account, ":account/balance", 100, 120))).get();
         } catch (Throwable t) {
             System.out.println("Failed with " + t.getMessage());
         }
