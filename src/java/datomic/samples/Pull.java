@@ -24,7 +24,7 @@ public class Pull {
         print(db.pull("[:artist/name :artist/startYear]", ledZeppelin));
 
         System.out.println("\nReverse lookup");
-        print(db.pull("[:artist/_country]", "country/GB"));
+        print(db.pull("[:artist/_country]", ":country/GB"));
 
         System.out.println("\nComponent Defaults");
         print(db.pull("[:release/media]", darkSideOfTheMoon));

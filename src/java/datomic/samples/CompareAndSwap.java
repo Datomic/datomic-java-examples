@@ -31,7 +31,7 @@ public class CompareAndSwap {
         account = Peer.resolveTempid((Database)txResult.get(DB_AFTER), txResult.get(TEMPIDS),  account);
 
         System.out.println("CAS from 100->110 should succeed");
-        conn.transact(list(list(":db.fn/cas", account, "account/balance", 100, 110))).get();
+        conn.transact(list(list(":db.fn/cas", account, ":account/balance", 100, 110))).get();
 
         System.out.println("CAS from 100->120 should fail");
         try {
@@ -40,7 +40,7 @@ public class CompareAndSwap {
             System.out.println("Failed with " + t.getMessage());
         }
 
-        System.out.println("Balance is " + conn.db().entity(account).get("account/balance"));
+        System.out.println("Balance is " + conn.db().entity(account).get(":account/balance"));
 
     }
 }

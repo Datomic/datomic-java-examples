@@ -28,13 +28,13 @@ public class Trust {
                                ":story/title", "ElastiCache in 6 minutes",
                                ":story/url", "http://blog.datomic.com/2012/09/elasticache-in-5-minutes.html"),
                            map(":db/id", tempid(":db.part/tx"),
-                               "source/confidence", 95L))).get();
+                               ":source/confidence", 95L))).get();
 
         conn.transact(list(map(":db/id", tempid(":db.part/user"),
                                ":story/title", "Request for Urgent Business Relationship",
                                ":story/url", "http://example.com/bogus-url"),
                            map(":db/id", tempid(":db.part/tx"),
-                               "source/confidence", 40L))).get();
+                               ":source/confidence", 40L))).get();
 
         Database db = conn.db();
 

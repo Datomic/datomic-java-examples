@@ -24,7 +24,7 @@ public class ComponentAttributes {
         System.out.println("\nTouch an entity with componeont attributes...");
         System.out.println(db.entity(":storyWithComments").touch());
 
-        System.out.println("\nDoc string for db.fn/retractEntity...");
+        System.out.println("\nDoc string for :db.fn/retractEntity...");
         System.out.println(db.entity(":db.fn/retractEntity").touch());
 
         Collection<Datom> datoms =
