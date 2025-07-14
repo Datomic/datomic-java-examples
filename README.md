@@ -7,8 +7,7 @@ Code examples for [Datomic's Java API](https://docs.datomic.com/javadoc/datomic/
 For specific feedback on the examples, please create an
 [issue](https://github.com/Datomic/datomic-java-examples/issues). 
 
-For questions about Datomic, try the [public mailing
-list](http://groups.google.com/group/datomic).
+For questions about Datomic, try the [the forum](https://forum.datomic.com/). [Ask Datomic](https://ask.datomic.com/). And feel free to [log a support ticket](https://support.cognitect.com/hc/en-us/requests/new). 
 
 ## Contributing
 
