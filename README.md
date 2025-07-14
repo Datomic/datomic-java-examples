@@ -1,6 +1,6 @@
 ## Datomic Java Examples
 
-Code examples for [Datomic's Java API](https://docs.datomic.com/on-prem/javadoc/index.html).
+Code examples for [Datomic's Java API](https://docs.datomic.com/javadoc/datomic/package-summary.html).
 
 ## Questions, Feedback?
 
