@@ -5,7 +5,7 @@
     <dependency>
       <groupId>com.datomic</groupId>
       <artifactId>datomic-free</artifactId>
-      <version>0.9.5350</version>
+      <version>0.9.5697</version>
       <exclusions>
         <exclusion>
           <groupId>org.slf4j</groupId>
